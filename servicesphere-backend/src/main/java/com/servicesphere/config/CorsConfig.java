@@ -16,7 +16,7 @@ public class CorsConfig {
                         .allowedOrigins(
                                 "http://localhost:5173",
                                 "https://servicesphere-rjrp.onrender.com",
-                                "https://your-frontend-app.vercel.app" // Replace with your exact Vercel frontend URL
+                                "https://servicesphere-three.vercel.app"
                         )
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
