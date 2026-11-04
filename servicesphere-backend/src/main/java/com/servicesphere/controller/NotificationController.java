@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/notifications")
-@CrossOrigin(origins = "http://localhost:5173")
 public class NotificationController {
 
     @Autowired
@@ -26,7 +25,6 @@ public class NotificationController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        // Users read their own notifications
         return ResponseEntity.ok(notificationRepository.findByRecipientUserIdOrderByCreatedAtDesc(userId));
     }
 

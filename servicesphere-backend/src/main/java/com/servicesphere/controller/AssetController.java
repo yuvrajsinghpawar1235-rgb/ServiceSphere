@@ -15,7 +15,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/assets")
-@CrossOrigin(origins = "http://localhost:5173")
 public class AssetController {
 
     @Autowired
@@ -44,7 +43,6 @@ public class AssetController {
 
     @PostMapping
     public ResponseEntity<?> createAsset(@RequestBody Asset asset, @RequestParam(required = false) Long roleId) {
-        // Role check: Only Managers (3) and Admins (5) can create assets
         if (roleId == null || (roleId != 3 && roleId != 5)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "Access Denied: Only Managers and Administrators can create IT assets."));
@@ -67,7 +65,6 @@ public class AssetController {
         return ResponseEntity.ok(savedAsset);
     }
 
-    // --- ASSIGNMENT & RETURN WORKFLOW ---
     @PatchMapping("/{id}/assign")
     public ResponseEntity<?> assignAsset(
             @PathVariable Long id,
@@ -83,7 +80,6 @@ public class AssetController {
 
         Asset asset = assetRepository.findById(id).orElseThrow(() -> new RuntimeException("Asset not found"));
 
-        // Strict Governance Rule: Prevent assignment of Retired or In Repair assets
         String currentStatus = asset.getStatus() != null ? asset.getStatus() : "";
         if ("Retired".equalsIgnoreCase(currentStatus) || "In Repair".equalsIgnoreCase(currentStatus)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -104,7 +100,7 @@ public class AssetController {
     public ResponseEntity<?> returnAsset(
             @PathVariable Long id,
             @RequestParam String condition,
-            @RequestParam String newStatus, // "In Stock" or "In Repair"
+            @RequestParam String newStatus,
             @RequestParam Long roleId) {
 
         if (roleId == null || (roleId != 2 && roleId != 3 && roleId != 5)) {
@@ -124,10 +120,8 @@ public class AssetController {
         return ResponseEntity.ok(Map.of("message", "Asset successfully returned and set to status: " + newStatus, "asset", updated));
     }
 
-    // --- WARRANTY EXPIRY ALERTS ---
     @GetMapping("/alerts/warranty-expiry")
     public ResponseEntity<List<Asset>> getWarrantyExpiryAlerts() {
-        // Returns active assets whose warranty ends within the next 30 days
         LocalDate expiryLimit = LocalDate.now().plusDays(30);
         return ResponseEntity.ok(assetRepository.findAssetsWithExpiringWarranty(expiryLimit));
     }

@@ -30,7 +30,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/tickets")
-@CrossOrigin(origins = "http://localhost:5173")
 @Tag(name = "IT Incident Management", description = "Endpoints for creating, filtering, assigning, escalating, and managing IT tickets.")
 public class TicketController {
 
@@ -243,8 +242,6 @@ public class TicketController {
         return ResponseEntity.ok(Map.of("message", "Ticket permanently deleted from enterprise records."));
     }
 
-    // --- COMMENTS & HISTORY ENDPOINTS (Added for full API Contract compliance) ---
-
     @Operation(summary = "Get comments for a ticket", description = "Retrieves all comments associated with an incident.")
     @GetMapping("/{id}/comments")
     public ResponseEntity<List<TicketComment>> getTicketComments(@PathVariable Long id) {
@@ -264,8 +261,6 @@ public class TicketController {
     public ResponseEntity<List<TicketHistory>> getTicketHistory(@PathVariable Long id) {
         return ResponseEntity.ok(historyRepository.findByTicketId(id));
     }
-
-    // --------------------------------------------------------------------------
 
     @Operation(summary = "Get SLA calculation status", description = "Calculates remaining resolution time and flags BREACHED, AT_RISK, or ON_TRACK states.")
     @GetMapping("/{id}/sla-status")

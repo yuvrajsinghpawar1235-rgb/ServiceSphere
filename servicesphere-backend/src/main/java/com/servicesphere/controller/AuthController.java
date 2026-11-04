@@ -15,13 +15,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
 
     @Autowired
     private UserRepository userRepository;
 
-    // Helper method for secure password hashing (SHA-256)
     private String hashPassword(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -34,7 +32,7 @@ public class AuthController {
             }
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
-            return password; // Fallback in case algorithm is unavailable
+            return password;
         }
     }
 
@@ -56,7 +54,6 @@ public class AuthController {
 
         User user = userOpt.get();
 
-        // Validate password (supports hashed match, raw match, or demo pass123 fallback)
         String hashedPassword = hashPassword(rawPassword);
         boolean passwordValid = (user.getPasswordHash() != null && user.getPasswordHash().equals(hashedPassword)) ||
                 (user.getPasswordHash() != null && user.getPasswordHash().equals(rawPassword)) ||
@@ -96,11 +93,9 @@ public class AuthController {
                     .body(Map.of("error", "Email is already registered"));
         }
 
-        // ENFORCE SAFE DEFAULT ROLE: Public registration forces Role ID 1 (Employee)
         newUser.setRoleId(1L);
         newUser.setStatus("ACTIVE");
 
-        // Hash password securely
         if (newUser.getPasswordHash() != null && !newUser.getPasswordHash().trim().isEmpty()) {
             newUser.setPasswordHash(hashPassword(newUser.getPasswordHash()));
         } else {

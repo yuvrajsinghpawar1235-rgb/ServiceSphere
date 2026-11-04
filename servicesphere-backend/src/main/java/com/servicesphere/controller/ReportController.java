@@ -3,7 +3,6 @@ package com.servicesphere.controller;
 import com.servicesphere.repository.AssetRepository;
 import com.servicesphere.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/reports")
-@CrossOrigin(origins = "http://localhost:5173")
 public class ReportController {
 
     @Autowired
@@ -65,7 +63,6 @@ public class ReportController {
     }
 }
 
-// Dedicated records with zero angle brackets to prevent any parsing/stripping errors
 record TicketSummaryRecord(long totalTickets, long openTickets, long resolvedTickets) {}
 record SlaMetricsRecord(String complianceRate, int breachedCount) {}
 record AssetSummaryRecord(long totalAssets, long assignedAssets, long availableAssets) {}
