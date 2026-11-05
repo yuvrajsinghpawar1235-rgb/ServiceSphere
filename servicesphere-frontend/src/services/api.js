@@ -21,8 +21,8 @@ export const createTicket = (ticketData, roleId) => handleRequest(() => axios.po
 export const updateTicketStatus = (id, status, roleId) => handleRequest(() => axios.patch(`${API_BASE_URL}/tickets/${id}/status`, null, { params: { status, roleId } }));
 export const updateTicketPriority = (id, priority, roleId) => handleRequest(() => axios.patch(`${API_BASE_URL}/tickets/${id}/priority`, null, { params: { priority, roleId } }));
 export const assignTicketAgent = (id, agentName, roleId) => handleRequest(() => axios.patch(`${API_BASE_URL}/tickets/${id}/assign`, null, { params: { agent: agentName, roleId } }));
-export const escalateTicket = (id, roleId) => handleRequest(() => axios.post(`${API_BASE_URL}/tickets/${id}/escalate`, null, { params: { roleId } }));
-export const archiveTicket = (id, roleId) => handleRequest(() => axios.post(`${API_BASE_URL}/tickets/${id}/archive`, null, { params: { roleId } }));
+export const escalateTicket = (id, newPriority, reason, roleId) => handleRequest(() => axios.patch(`${API_BASE_URL}/tickets/${id}/escalate`, null, { params: { newPriority, reason, roleId } }));
+export const archiveTicket = (id, roleId) => handleRequest(() => axios.patch(`${API_BASE_URL}/tickets/${id}/archive`, null, { params: { roleId } }));
 
 // Comments & Audit History
 export const getTicketComments = (ticketId) => handleRequest(() => axios.get(`${API_BASE_URL}/tickets/${ticketId}/comments`));
