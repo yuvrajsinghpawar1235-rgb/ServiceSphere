@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://servicesphere-rjrp.onrender.com/api';
+// Hardcoded to ensure the /api prefix is never omitted by environment variables
+const API_BASE_URL = 'https://servicesphere-rjrp.onrender.com/api';
 
 const handleRequest = async (apiCall) => {
     try {
