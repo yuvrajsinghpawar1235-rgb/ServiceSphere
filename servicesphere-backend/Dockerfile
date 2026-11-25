@@ -7,7 +7,11 @@ COPY pom.xml .
 COPY src ./src
 
 # Build the jar file, skipping tests for fast deployment
-RUN mvn clean package -DskipTests
+RUN for i in 1 2 3 4 5; do \
+      mvn clean package -DskipTests -B && break; \
+      echo "Maven build attempt $i failed, retrying in 15s..."; \
+      sleep 15; \
+    done
 
 # Stage 2: Run the application
 FROM eclipse-temurin:21-jre-alpine
