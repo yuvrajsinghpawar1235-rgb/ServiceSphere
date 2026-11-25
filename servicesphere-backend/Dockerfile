@@ -1,27 +1,26 @@
-# Stage 1: Build the Spring Boot application
-FROM maven:3.9.6-eclipse-temurin-21 AS build
+# Stage 1: Build the Java application using Maven with Java 21
+FROM maven:3.9-eclipse-temurin-21-alpine AS build
 WORKDIR /app
 
-# Copy Maven wrapper and pom files
+# Cache dependencies before copying source code
 COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Copy source and build the JAR
 COPY src ./src
+RUN mvn clean package -DskipTests -B
 
-# Build the jar file, skipping tests for fast deployment
-RUN for i in 1 2 3 4 5; do \
-      mvn clean package -DskipTests -B && break; \
-      echo "Maven build attempt $i failed, retrying in 15s..."; \
-      sleep 15; \
-    done
-
-# Stage 2: Run the application
+# Stage 2: Run the built JAR file using a lightweight JRE 21 runtime
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-# Copy the built jar from the build stage
-COPY --from=build /app/target/*.jar app.jar
+# Run as a non-root user
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-# Expose port (Render automatically assigns $PORT at runtime)
+# Copy only the packaged artifact (avoid matching *.jar.original if present)
+COPY --from=build /app/target/*-SNAPSHOT.jar app.jar
+RUN chown appuser:appgroup app.jar
+
+USER appuser
 EXPOSE 8080
-
-# Run the Spring Boot app
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]
